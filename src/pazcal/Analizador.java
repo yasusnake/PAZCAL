@@ -1,5 +1,6 @@
 package pazcal;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -7,9 +8,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.StringTokenizer;
 
-public class Analizador{
+public class Analizador {
     private static String nombreDelArchivo;
     private static String extensionDelArchivo;
     private static String contenidoDelArchivo;
@@ -49,15 +51,21 @@ public class Analizador{
                 
                 n++;
                 x++;
-            }       
+            }      
+
+            pas.close();
+            err.close();
+            b.close(); 
 
             contenidoDelArchivo = caracteres;
             
             System.out.println("Fin escritura en: " + nombreDelArchivo + ".pas");
-
-            pas.close();
-            err.close();
-            b.close();
+            
+            //Creando archivo ejecutable de pascal
+            Process process = Runtime.getRuntime().exec("fpc " + nombreDelArchivo + ".pas");
+            InputStream inputstream = process.getInputStream();
+            BufferedInputStream bufferedinputstream = new BufferedInputStream(inputstream);
+            bufferedinputstream.close();
         } catch (Exception e) {
             System.err.println("Ocurrio un error durante el analisis: " + e.getMessage());
         }
@@ -120,7 +128,7 @@ public class Analizador{
         }
     }
     
-    public static void AnalizandoArchivo(String ruta) throws IOException {
+    public static void AnalizandoArchivo(String ruta) throws IOException {        
         getFileExtension(new File(ruta));
         
         if(extensionDelArchivo.equals(".pazcal")) {
@@ -130,7 +138,7 @@ public class Analizador{
             
 //            System.out.println(contenidoDelArchivo);
         } else {
-            System.out.println("Extensión de archivo incorrecto" );
+            System.err.println("Extensión de archivo incorrecto" );
         }
     }
 }
