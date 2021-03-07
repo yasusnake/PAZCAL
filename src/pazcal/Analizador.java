@@ -9,77 +9,112 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
-public class Analizador extends ArchivoPascal {
-    public Analizador(String nombreDelArchivo, String contenidoDelArchivo) {
-        super(nombreDelArchivo, contenidoDelArchivo);
-    }
+public class Analizador{
+    private static String nombreDelArchivo;
+    private static String extensionDelArchivo;
+    private static String contenidoDelArchivo;
     
-    public static String muestraContenido(String archivo) throws FileNotFoundException, IOException {
+    private static void analizarContenido(String archivo) throws FileNotFoundException, IOException {
         String cadena;
         String caracteres = "";
         int n = 0;
-        FileReader f = new FileReader(archivo);
-        BufferedReader b = new BufferedReader(f);
-        while((cadena = b.readLine())!=null) {
-            if(n > 0)
-                caracteres = caracteres + "\n" + cadena.replaceAll(" +", " ");
-            else
-                caracteres = caracteres + cadena.replaceAll(" +", " ");
-            n++;
-        }
-        b.close();
+        FileReader file = null;
+        FileWriter pas = null;
         
-        return caracteres;
+        try {
+            file = new FileReader(archivo);
+            pas  = new FileWriter( nombreDelArchivo + ".pas");
+            BufferedReader b = new BufferedReader(file);
+        
+            while((cadena = b.readLine())!=null) {
+                pas.write(cadena + "\n");
+                
+                if(n > 0)
+                    caracteres = caracteres + "\n" + cadena.replaceAll(" +", " ");
+                else
+                    caracteres = caracteres + cadena.replaceAll(" +", " ");
+                n++;
+            }       
+
+            contenidoDelArchivo = caracteres;
+            
+            System.out.println("Fin escritura en: " + nombreDelArchivo + ".pas");
+
+            pas.close();
+            b.close();
+        } catch (Exception e) {
+            System.err.println("Ocurrio un error durante el analisis: " + e.getMessage());
+        }
     }
     
-    public static String getFileExtension(File file) {
-        String extension = "";
-        
+    private static void getFileExtension(File file) {        
         System.out.println("Analizando la extensión del archivo");
  
         try {
             if (file != null && file.exists()) {
                 String name = file.getName();
-                String fileName = name.replaceFirst("[.][^.]+$", "");
-                extension = name.substring(name.lastIndexOf("."));
-                extension = extension.toLowerCase();
+                nombreDelArchivo = name.replaceFirst("[.][^.]+$", "");
+                String extension = name.substring(name.lastIndexOf("."));
+                extensionDelArchivo = extension.toLowerCase();
                 
                 if(extension.equals(".pazcal"))
-                    creandoArchivodeErrores(fileName);
+                    creandoArchivos();
             }
         } catch (Exception e) {
-            extension = "";
+            extensionDelArchivo = "";
             System.err.println(e);
         }
- 
-        return extension;
     }
     
-    public static void analizador(String pazcal) {
+    private static void analizador(String pazcal) {
         StringTokenizer st = new StringTokenizer(pazcal);
         
         while (st.hasMoreTokens()) {
             System.out.println(st.nextToken());
         }
-        
-//        return temp;
     }
     
-    public static void creandoArchivodeErrores(String nombre) {
+    private static void creandoArchivos() {
         System.out.println("Creando archivo de errores");
         try {
-            String ruta = nombre + "-errores.txt";
-            File file = new File(ruta);
-            // Si el archivo no existe es creado
-            if (!file.exists()) {
-                file.createNewFile();
+            // Archivo de errores
+            String errores = nombreDelArchivo + "-errores.txt";
+            File fileError = new File(errores);
+            // Si el archivo de errores no existe es creado
+            if (!fileError.exists()) {
+                fileError.createNewFile();
             }
-            FileWriter fw = new FileWriter(file);
+            FileWriter fw = new FileWriter(fileError);
             BufferedWriter bw = new BufferedWriter(fw);
             bw.close();
+            
+            // Archivo de .pas
+            String pascal = nombreDelArchivo + ".pas";
+            File filePas = new File(pascal);
+            // Si el archivo de errores no existe es creado
+            if (!filePas.exists()) {
+                filePas.createNewFile();
+            }
+            FileWriter fwp = new FileWriter(filePas);
+            BufferedWriter bwp = new BufferedWriter(fwp);
+            bwp.close();
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println(e);
+        }
+    }
+    
+    public static void AnalizandoArchivo(String ruta) throws IOException {
+        getFileExtension(new File(ruta));
+        
+        if(extensionDelArchivo.equals(".pazcal")) {
+            analizarContenido(ruta);
+            
+//            analizador();
+            
+//            System.out.println(contenidoDelArchivo);
+        } else {
+            System.out.println("Extensión de archivo incorrecto" );
         }
     }
 }

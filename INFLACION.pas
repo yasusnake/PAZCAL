@@ -1,4 +1,4 @@
-PROGRAM INFLACION ( INPUT, OUTPUT );
+PROGRAM INFLACION       ( INPUT, OUTPUT );
 {
 Asumiendo tasas de inflación anual de 7%, 8%, y 10%,
 encontrar el factor por el cual cualquier moneda, tales como
