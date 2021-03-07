@@ -87,15 +87,12 @@ public class PAZCAL {
         String ruta = "INFLACION.pazcal";
 //        String ruta = args[0];
         
-//        ArrayList<Token> tokenArrayList = TokenScanner.scan(new File(ruta));
-//        ArrayList<Token> tokenArrayList = TokenScanner.scan(new File(ruta));
-        
         String extension = getFileExtension(new File(ruta));
         
         if(extension.equals(".pazcal")) {
             String pazcal = muestraContenido(ruta);
             
-//            analizador(pazcal);
+            analizador(pazcal);
             
             System.out.println(pazcal);
         } else {
