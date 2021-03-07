@@ -16,24 +16,39 @@ public class Analizador{
     
     private static void analizarContenido(String archivo) throws FileNotFoundException, IOException {
         String cadena;
-        String caracteres = "";
-        int n = 0;
-        FileReader file = null;
-        FileWriter pas = null;
+        String ceros      = "";
+        String caracteres = ""; 
+        FileReader file   = null;
+        FileWriter pas    = null;
+        FileWriter err    = null;
         
         try {
             file = new FileReader(archivo);
             pas  = new FileWriter( nombreDelArchivo + ".pas");
+            err  = new FileWriter( nombreDelArchivo + "-errores.txt");
             BufferedReader b = new BufferedReader(file);
         
+            int n = 0;
+            int x = 1;
             while((cadena = b.readLine())!=null) {
                 pas.write(cadena + "\n");
+                
+                if(Integer.toString(x).length() == 1)
+                    ceros = "000";
+                else if(Integer.toString(x).length() == 2)
+                    ceros = "00";
+                else if(Integer.toString(x).length() == 3)
+                    ceros = "0";
+                
+                err.write(ceros + x + "  " + cadena + "\n");
                 
                 if(n > 0)
                     caracteres = caracteres + "\n" + cadena.replaceAll(" +", " ");
                 else
                     caracteres = caracteres + cadena.replaceAll(" +", " ");
+                
                 n++;
+                x++;
             }       
 
             contenidoDelArchivo = caracteres;
@@ -41,6 +56,7 @@ public class Analizador{
             System.out.println("Fin escritura en: " + nombreDelArchivo + ".pas");
 
             pas.close();
+            err.close();
             b.close();
         } catch (Exception e) {
             System.err.println("Ocurrio un error durante el analisis: " + e.getMessage());
