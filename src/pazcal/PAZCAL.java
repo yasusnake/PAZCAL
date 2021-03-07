@@ -97,7 +97,7 @@ public class PAZCAL {
             
 //            analizador(pazcal);
             
-//            System.out.println(pazcal);
+            System.out.println(pazcal);
         } else {
             System.out.println("Extensión de archivo incorrecto" );
         }
