@@ -11,12 +11,31 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import static java.lang.Thread.sleep;
+import java.util.HashMap;
+import java.util.Scanner;
 import java.util.StringTokenizer;
 
 public class Analizador {
     private static String nombreDelArchivo;
     private static String extensionDelArchivo;
     private static String contenidoDelArchivo;
+    
+    private static final HashMap<String, String> KEYWORDS_TOKEN;
+    static {
+        KEYWORDS_TOKEN = new HashMap<>();
+        String word;
+
+        try {
+            Scanner sc = new Scanner(new File("keywords.txt"));
+            
+            while(sc.hasNext()){
+                word = sc.next();
+                KEYWORDS_TOKEN.put(word, String.format("TK_%s", word.toUpperCase()));
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
     
     private static void analizarContenido(String archivo) throws FileNotFoundException, IOException {
         String cadena;
@@ -58,6 +77,9 @@ public class Analizador {
                     haveErr = true;
                     err.write(ceros + x + "  La línea " + x + " contiene más de 150 caracteres\n");
                 }
+                
+                //Analizar linea
+                analizador(cadena.replaceAll(" +", " "));
                 
                 n++;
                 x++;
@@ -121,12 +143,12 @@ public class Analizador {
                         System.err.println("No se pudo crear el archivo .exe");
                     
                     if(!SO.contains("win"))
-                        System.err.println("No se puede ejecutar "
+                        System.err.println("No se puede ejecutar el programa "
                             + nombreDelArchivo
-                            + ".exe el programa en este Sistema Operativo"
+                            + ".exe en este Sistema Operativo"
                         );
-                }
-            }
+                }// Fin if/else ejecutar .exe
+            }// Fin if/else si no tiene errores
         } catch (Exception e) {
             System.err.println("Ocurrio un error durante el analisis: " + e.getMessage());
         }
@@ -151,11 +173,24 @@ public class Analizador {
         }
     }
     
-    private static void analizador(String pazcal) {
-        StringTokenizer st = new StringTokenizer(pazcal);
+    private static void analizador(String linea) {
+        StringTokenizer st = new StringTokenizer(linea);
+        Boolean hasProgram = false;
         
         while (st.hasMoreTokens()) {
-            System.out.println(st.nextToken());
+            String token = st.nextToken().toUpperCase();
+            System.out.println(token);
+            
+            if(KEYWORDS_TOKEN.containsKey(token)) {
+//                System.out.println("Contiene token");
+
+                if(token.contains("PROGRAM"))
+                    hasProgram = true;
+                
+                if(hasProgram) {
+                    //Analizar linea de program...
+                }
+            }
         }
     }
     
@@ -194,10 +229,6 @@ public class Analizador {
         
         if(extensionDelArchivo.equals(".pazcal")) {
             analizarContenido(ruta);
-            
-//            analizador();
-            
-//            System.out.println(contenidoDelArchivo);
         } else {
             System.err.println("Extensión de archivo incorrecto" );
         }
