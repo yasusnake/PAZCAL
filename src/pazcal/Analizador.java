@@ -9,6 +9,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import static java.lang.Thread.sleep;
 import java.util.StringTokenizer;
 
 public class Analizador {
@@ -84,6 +86,9 @@ public class Analizador {
                     Process process = Runtime.getRuntime().exec("fpc " + nombreDelArchivo + ".pas");
                     InputStream inputstream = process.getInputStream();
                     BufferedInputStream bufferedinputstream = new BufferedInputStream(inputstream);
+                    System.out.println("Creando archivo " + nombreDelArchivo + ".exe");
+                    sleep(2000);
+                    creadoExe = true;
                     bufferedinputstream.close();
                 } catch (IOException e) {
                     System.err.println("Error al ejecutar comando fpc " + e);
@@ -92,21 +97,34 @@ public class Analizador {
                 String SO = System.getProperty("os.name").toLowerCase();
                 
                 //Verificar que el SO es Windows
-                if(SO.contains("win")) {
-                    System.out.println("El SO es Windows");
+                if(creadoExe && SO.contains("win")) {
                     try {
-                        Process process = Runtime.getRuntime().exec(nombreDelArchivo + ".exe");
-                        InputStream inputstream = process.getInputStream();
-                        BufferedInputStream bufferedinputstream = new BufferedInputStream(inputstream);
-                        bufferedinputstream.close();
+                        // Se lanza el ejecutable.
+//                        Process p=Runtime.getRuntime().exec ("cmd /c dir");
+                        Process p=Runtime.getRuntime().exec(nombreDelArchivo + ".exe");
+                        InputStream is = p.getInputStream(); // Se obtiene el stream de salida del programa
+                        // Se prepara un bufferedReader para poder leer la salida más comodamente.
+                        BufferedReader br = new BufferedReader (new InputStreamReader (is));
+                        String aux = br.readLine(); // Se lee la primera linea
+
+                        // Se empieza a leer cada linea
+                        while (aux!=null)
+                        {
+                            System.out.println (aux);
+                            aux = br.readLine();
+                        }
                     } catch (IOException e) {
                         System.err.println("Error al correr el programa " + e);
                     }
                 } else {
-                    System.err.println("No se puede ejecutar "
-                        + nombreDelArchivo
-                        + ".exe el programa en este Sistema Operativo"
-                    );
+                    if(!creadoExe)
+                        System.err.println("No se pudo crear el archivo .exe");
+                    
+                    if(!SO.contains("win"))
+                        System.err.println("No se puede ejecutar "
+                            + nombreDelArchivo
+                            + ".exe el programa en este Sistema Operativo"
+                        );
                 }
             }
         } catch (Exception e) {

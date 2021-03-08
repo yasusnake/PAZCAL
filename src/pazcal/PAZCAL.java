@@ -9,6 +9,10 @@ public class PAZCAL {
 //        String ruta = args[0];
         
         Analizador amalizador = new Analizador();
-        amalizador.AnalizandoArchivo(ruta);
+        
+        if(ruta.length() > 0)
+            amalizador.AnalizandoArchivo(ruta);
+        else 
+            System.err.println("No hay archivo, coloque uno");
     }  
 }
