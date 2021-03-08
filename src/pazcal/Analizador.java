@@ -69,19 +69,31 @@ public class Analizador {
             
             System.out.println("Fin escritura en: " + nombreDelArchivo + ".pas");
             
-            if(haveErr)
+            if(haveErr) {
                 System.err.println("El script " 
                     + nombreDelArchivo 
                     + ".pazcal tiene algunos errores, para más detalles ver el archivo de errores: " 
                     + nombreDelArchivo 
                     + "-errores.txt"
                 );
-            
-            //Creando archivo ejecutable de pascal
-            Process process = Runtime.getRuntime().exec("fpc " + nombreDelArchivo + ".pas");
-            InputStream inputstream = process.getInputStream();
-            BufferedInputStream bufferedinputstream = new BufferedInputStream(inputstream);
-            bufferedinputstream.close();
+            } else {
+                //Creando archivo ejecutable de pascal
+                Boolean creadoExe = false;
+                
+                try {
+                    Process process = Runtime.getRuntime().exec("fpc " + nombreDelArchivo + ".pas");
+                    InputStream inputstream = process.getInputStream();
+                    BufferedInputStream bufferedinputstream = new BufferedInputStream(inputstream);
+                    bufferedinputstream.close();
+                } catch (IOException e) {
+                    System.err.println("Error al ejecutar comando fpc" + e);
+                }
+                
+                String SO = System.getProperty("os.name");
+                System.out.println(SO);
+                
+//                if()
+            }
         } catch (Exception e) {
             System.err.println("Ocurrio un error durante el analisis: " + e.getMessage());
         }
