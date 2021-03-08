@@ -86,13 +86,28 @@ public class Analizador {
                     BufferedInputStream bufferedinputstream = new BufferedInputStream(inputstream);
                     bufferedinputstream.close();
                 } catch (IOException e) {
-                    System.err.println("Error al ejecutar comando fpc" + e);
+                    System.err.println("Error al ejecutar comando fpc " + e);
                 }
                 
-                String SO = System.getProperty("os.name");
-                System.out.println(SO);
+                String SO = System.getProperty("os.name").toLowerCase();
                 
-//                if()
+                //Verificar que el SO es Windows
+                if(SO.contains("win")) {
+                    System.out.println("El SO es Windows");
+                    try {
+                        Process process = Runtime.getRuntime().exec(nombreDelArchivo + ".exe");
+                        InputStream inputstream = process.getInputStream();
+                        BufferedInputStream bufferedinputstream = new BufferedInputStream(inputstream);
+                        bufferedinputstream.close();
+                    } catch (IOException e) {
+                        System.err.println("Error al correr el programa " + e);
+                    }
+                } else {
+                    System.err.println("No se puede ejecutar "
+                        + nombreDelArchivo
+                        + ".exe el programa en este Sistema Operativo"
+                    );
+                }
             }
         } catch (Exception e) {
             System.err.println("Ocurrio un error durante el analisis: " + e.getMessage());
