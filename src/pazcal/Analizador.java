@@ -23,6 +23,7 @@ public class Analizador {
         FileReader file   = null;
         FileWriter pas    = null;
         FileWriter err    = null;
+        Boolean haveErr   = false;
         
         try {
             file = new FileReader(archivo);
@@ -42,12 +43,19 @@ public class Analizador {
                 else if(Integer.toString(x).length() == 3)
                     ceros = "0";
                 
-                err.write(ceros + x + "  " + cadena + "\n");
+                err.write(ceros + x + "  " + cadena.replaceAll(" +", " ") + "\n");
                 
+                //Limpieza espacios en blanco
                 if(n > 0)
                     caracteres = caracteres + "\n" + cadena.replaceAll(" +", " ");
                 else
                     caracteres = caracteres + cadena.replaceAll(" +", " ");
+                
+                //Validación de error si la línea tiene más de 150 caracteres
+                if(cadena.replaceAll(" +", " ").length() > 150) {
+                    haveErr = true;
+                    err.write(ceros + x + "  La línea " + x + " contiene más de 150 caracteres\n");
+                }
                 
                 n++;
                 x++;
@@ -60,6 +68,14 @@ public class Analizador {
             contenidoDelArchivo = caracteres;
             
             System.out.println("Fin escritura en: " + nombreDelArchivo + ".pas");
+            
+            if(haveErr)
+                System.err.println("El script " 
+                    + nombreDelArchivo 
+                    + ".pazcal tiene algunos errores, para más detalles ver el archivo de errores: " 
+                    + nombreDelArchivo 
+                    + "-errores.txt"
+                );
             
             //Creando archivo ejecutable de pascal
             Process process = Runtime.getRuntime().exec("fpc " + nombreDelArchivo + ".pas");
