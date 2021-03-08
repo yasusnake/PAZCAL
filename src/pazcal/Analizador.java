@@ -33,7 +33,7 @@ public class Analizador {
                 KEYWORDS_TOKEN.put(word, String.format("TK_%s", word.toUpperCase()));
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            System.err.println("Archivo no encontrado" + e.getMessage());
         }
     }
     
@@ -41,53 +41,59 @@ public class Analizador {
         String cadena;
         String ceros      = "";
         String caracteres = ""; 
-        FileReader file   = null;
-        FileWriter pas    = null;
-        FileWriter err    = null;
+        FileReader file;
+        FileWriter pas;
+        FileWriter err;
         Boolean haveErr   = false;
         
         try {
             file = new FileReader(archivo);
             pas  = new FileWriter( nombreDelArchivo + ".pas");
             err  = new FileWriter( nombreDelArchivo + "-errores.txt");
-            BufferedReader b = new BufferedReader(file);
-        
-            int n = 0;
-            int x = 1;
-            while((cadena = b.readLine())!=null) {
-                pas.write(cadena + "\n");
-                
-                if(Integer.toString(x).length() == 1)
-                    ceros = "000";
-                else if(Integer.toString(x).length() == 2)
-                    ceros = "00";
-                else if(Integer.toString(x).length() == 3)
-                    ceros = "0";
-                
-                err.write(ceros + x + "  " + cadena.replaceAll(" +", " ") + "\n");
-                
-                //Limpieza espacios en blanco
-                if(n > 0)
-                    caracteres = caracteres + "\n" + cadena.replaceAll(" +", " ");
-                else
-                    caracteres = caracteres + cadena.replaceAll(" +", " ");
-                
-                //Validación de error si la línea tiene más de 150 caracteres
-                if(cadena.replaceAll(" +", " ").length() > 150) {
-                    haveErr = true;
-                    err.write(ceros + x + "  La línea " + x + " contiene más de 150 caracteres\n");
+            try (BufferedReader b = new BufferedReader(file)) {
+                int n = 0;
+                int x = 1;
+                while((cadena = b.readLine())!=null) {
+                    pas.write(cadena + "\n");
+                    
+                    switch (Integer.toString(x).length()) {
+                        case 1:
+                            ceros = "000";
+                            break;
+                        case 2:
+                            ceros = "00";
+                            break;
+                        case 3:
+                            ceros = "0";
+                            break;
+                        default:
+                            break;
+                    }
+                    
+                    err.write(ceros + x + "  " + cadena.replaceAll(" +", " ") + "\n");
+                    
+                    //Limpieza espacios en blanco
+                    if(n > 0)
+                        caracteres = caracteres + "\n" + cadena.replaceAll(" +", " ");
+                    else
+                        caracteres = caracteres + cadena.replaceAll(" +", " ");
+                    
+                    //Validación de error si la línea tiene más de 150 caracteres
+                    if(cadena.replaceAll(" +", " ").length() > 150) {
+                        haveErr = true;
+                        err.write(ceros + x + "  La línea " + x + " contiene más de 150 caracteres\n");
+                    }
+                    
+                    //Analizar linea
+                    analizador(cadena.replaceAll(" +", " "));
+                    
+                    n++;
+                    x++;
                 }
                 
-                //Analizar linea
-                analizador(cadena.replaceAll(" +", " "));
-                
-                n++;
-                x++;
-            }      
-
-            pas.close();
-            err.close();
-            b.close(); 
+                pas.close();
+                err.close();
+            } 
 
             contenidoDelArchivo = caracteres;
             
@@ -107,11 +113,11 @@ public class Analizador {
                 try {
                     Process process = Runtime.getRuntime().exec("fpc " + nombreDelArchivo + ".pas");
                     InputStream inputstream = process.getInputStream();
-                    BufferedInputStream bufferedinputstream = new BufferedInputStream(inputstream);
-                    System.out.println("Creando archivo " + nombreDelArchivo + ".exe");
-                    sleep(2000);
-                    creadoExe = true;
-                    bufferedinputstream.close();
+                    try (BufferedInputStream bufferedinputstream = new BufferedInputStream(inputstream)) {
+                        System.out.println("Creando archivo " + nombreDelArchivo + ".exe");
+                        sleep(2000);
+                        creadoExe = true;
+                    }
                 } catch (IOException e) {
                     System.err.println("Error al ejecutar comando fpc " + e);
                 }
@@ -149,7 +155,7 @@ public class Analizador {
                         );
                 }// Fin if/else ejecutar .exe
             }// Fin if/else si no tiene errores
-        } catch (Exception e) {
+        } catch (IOException | InterruptedException e) {
             System.err.println("Ocurrio un error durante el analisis: " + e.getMessage());
         }
     }
@@ -179,7 +185,7 @@ public class Analizador {
         
         while (st.hasMoreTokens()) {
             String token = st.nextToken().toUpperCase();
-            System.out.println(token);
+//            System.out.println(token);
             
             if(KEYWORDS_TOKEN.containsKey(token)) {
 //                System.out.println("Contiene token");
@@ -218,8 +224,7 @@ public class Analizador {
             FileWriter fwp = new FileWriter(filePas);
             BufferedWriter bwp = new BufferedWriter(fwp);
             bwp.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException e) {
             System.err.println(e);
         }
     }
