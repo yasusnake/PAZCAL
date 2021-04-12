@@ -11,79 +11,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import static java.lang.Thread.sleep;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class Analizador {
+public class Analisis {
     private static String nombreDelArchivo;
     private static String extensionDelArchivo;
     private static String contenidoDelArchivo;
     static FileWriter fileErr;
-    
-    private static void validarBeginEnd(String cadena, int numLinea) throws IOException  {
-        Boolean exBegin = false;
-        Boolean beBegin = false;
-        Boolean exEnd   = false;
-        Boolean afEnd   = false;
-        int posBegin    = 0;
-        int posEnd      = 0;
-        
-        Pattern pat = Pattern.compile("(BEGIN)|(END .)|([a-zA-Z]+\\s+BEGIN)");
-        Matcher mat = pat.matcher(cadena.toUpperCase());
-        
-        int n = 0;
-        while(mat.find()) {
-            System.out.println("GP: " + mat.group());
-            
-            if(mat.group(1) != null) {
-                exBegin  = true;
-                posBegin = n;
-            }
-            
-            if(mat.group(3) != null) {
-                exBegin  = true;
-                beBegin  = true;
-                posBegin = n;
-            }
-            
-            if(mat.group(2) != null) {
-                exEnd  = true;
-                posEnd = n;
-            }
-            
-            n++;
-        }
-        
-        if(posBegin > posEnd) {
-            String error = "Error 000: Línea " + numLinea + ". El orden de BEGIN - END no es el correcto";
-            fileErr.write("\t\t\t" + error + "\n");
-            System.err.println(error);
-        } 
-        
-        if(beBegin == true) {
-            String error = "Error 001: Línea " + numLinea + ". Hay comandos antes de BEGIN";
-            fileErr.write("\t\t\t" + error + "\n");
-            System.err.println(error);
-        }
-        
-        if(afEnd == true) {
-            String error = "Error 002: Línea " + numLinea + ". Hay comandos despues de END .";
-            fileErr.write("\t\t\t" + error + "\n");
-            System.err.println(error);
-        }
-        
-        if(exBegin && exEnd == false) {
-            String error = "Error 003: Línea " + numLinea + ". No hay cierre después de BEGIN";
-            fileErr.write("\t\t\t" + error + "\n");
-            System.err.println(error);
-        }
-        
-        if(exEnd == exBegin == false) {
-            String error = "Error 004: Línea " + numLinea + ". No hay aperturas antes de END .";
-            fileErr.write("\t\t\t" + error + "\n");
-            System.err.println(error);
-        }
-    }
     
     private static void analizarContenido(String archivo) throws FileNotFoundException, IOException {
         String cadena;
@@ -120,10 +53,11 @@ public class Analizador {
                     fileErr.write(ceros + x + "  " + cadena + "\n");
                     
                     //Limpieza espacios en blanco
-                    if(n > 0)
+                    if (n > 0) {
                         caracteres = caracteres + "\n" + cadena.replaceAll(" +", " ");
-                    else
+                    } else {
                         caracteres = caracteres + cadena.replaceAll(" +", " ");
+                    }
                     
                     //Validación de error si la línea tiene más de 150 caracteres
                     if(cadena.length() > 150) {
@@ -134,15 +68,15 @@ public class Analizador {
                     }
                     
                     //Analizar linea
-                    AnalizadorSintatico.analizador(cadena.replaceAll(" +", " "), nombreDelArchivo, ln, fileErr);
+//                    AnalizadorSintatico.analizador(cadena.replaceAll(" +", " "), nombreDelArchivo, ln, fileErr);
                     
                     n++;
                     x++;
                     ln++;
                 }
-            
-                //Validar BEGIN -END
-                validarBeginEnd(caracteres, ln);
+                
+                //AnalizarTodo el script
+                AnalizadorSintactico.analizadorSintactico(caracteres, nombreDelArchivo, fileErr);
                 
                 pas.close();
                 fileErr.close();
