@@ -91,6 +91,7 @@ public class Analizador {
         String ceros      = "";
         String caracteres = ""; 
         Boolean haveErr   = false;
+        AnalizadorSintatico analizadorStc2 = new AnalizadorSintatico();
         
         try {
             FileReader file = new FileReader(archivo);
@@ -134,7 +135,7 @@ public class Analizador {
                     }
                     
                     //Analizar linea
-                    AnalizadorSintatico.analizador(cadena.replaceAll(" +", " "), nombreDelArchivo, ln, fileErr);
+                    analizadorStc2.analizador(cadena.replaceAll(" +", " "), nombreDelArchivo, ln, fileErr);
                     
                     n++;
                     x++;

@@ -5,8 +5,10 @@
 0005  el franco, el dólar, la libra esterlina, el marco, el rublo, el yen
 0006  o el florín han sido devaluadas en 1, 2, ...., N anos.
 0007  }
+			Error 000: Linea 7 existe un error de apertura o cierre de {}
 0008  {error falta el comando VAR}
 0009  MAXANOS: INTEGER;
+			Error 020: Línea 9 falta la declaración de VAR antes de las variables;
 0010  ANO: INTEGER;
 0011  FACTOR1: REAL;
 0012  FACTOR2: REAL;
@@ -38,7 +40,10 @@
 0037  WRITELN ( ANO: 5, FACTOR1: 7:3, FACTOR2: 7:3, FACTOR3: 7:3 )
 0038  UNTIL ANO = MAXANOS;
 0039  WRITELN;
-0040  WRITELN ( OUTPUT )
+0040  WRITELN ( OUTPUUUT )
+			Error 016: Línea 40 Error de variables, la variable OUTPUUUT no está declarada
 0041  WRITELN;        
 0042  READLN;
-0043  END .
+0043  READLN(TOTAL)
+			Error 016: Línea 43 Error de variables, la variable TOTAL no está declarada
+0044  END .

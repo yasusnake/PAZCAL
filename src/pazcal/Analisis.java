@@ -19,6 +19,8 @@ public class Analisis {
     static FileWriter fileErr;
     
     private static void analizarContenido(String archivo) throws FileNotFoundException, IOException {
+        AnalizadorSintactico analizadorStc = new AnalizadorSintactico();
+        AnalizadorSintatico analizadorStc2 = new AnalizadorSintatico();
         String cadena;
         FileWriter pas;
         String ceros      = "";
@@ -29,6 +31,9 @@ public class Analisis {
             FileReader file = new FileReader(archivo);
             pas  = new FileWriter( nombreDelArchivo + ".pas");
             fileErr  = new FileWriter( nombreDelArchivo + "-errores.txt");
+            
+            analizadorStc.setFileErr(nombreDelArchivo, fileErr);
+            
             try (BufferedReader b = new BufferedReader(file)) {
                 int n  = 0;
                 int x  = 1;
@@ -68,7 +73,9 @@ public class Analisis {
                     }
                     
                     //Analizar linea
-//                    AnalizadorSintatico.analizador(cadena.replaceAll(" +", " "), nombreDelArchivo, ln, fileErr);
+                    analizadorStc2.analizador(cadena.replaceAll(" +", " "), nombreDelArchivo, ln, fileErr);
+                    analizadorStc.ValidarExpresionXLinea(cadena, ln);
+                    analizadorStc.ValidarExpresionStringXLinea(cadena, ln);
                     
                     n++;
                     x++;
@@ -76,7 +83,8 @@ public class Analisis {
                 }
                 
                 //AnalizarTodo el script
-                AnalizadorSintactico.analizadorSintactico(caracteres, nombreDelArchivo, fileErr);
+//                analizadorStc.analizadorSintactico(caracteres);
+                analizadorStc.vaciasPilas();
                 
                 pas.close();
                 fileErr.close();
