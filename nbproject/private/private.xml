@@ -5,8 +5,8 @@
         <group>
             <file>file:/home/gaius/Documents/Compiladores/PAZCAL/src/pazcal/PAZCAL.java</file>
             <file>file:/home/gaius/Documents/Compiladores/PAZCAL/src/pazcal/Analisis.java</file>
+            <file>file:/home/gaius/Documents/Compiladores/PAZCAL/src/pazcal/PilaChar.java</file>
             <file>file:/home/gaius/Documents/Compiladores/PAZCAL/src/pazcal/AnalizadorSintatico.java</file>
-            <file>file:/home/gaius/Documents/Compiladores/PAZCAL/src/pazcal/AnalizadorSintactico.java</file>
         </group>
     </open-files>
 </project-private>
