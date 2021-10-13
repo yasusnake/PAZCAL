@@ -3,7 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/media/gaius/Spartacus/Programacion/Compiladores/PAZCAL/src/PAZCAL.java</file>
+            <file>file:/home/gaius/Documents/Compiladores/PAZCAL/src/pazcal/PAZCAL.java</file>
+            <file>file:/home/gaius/Documents/Compiladores/PAZCAL/src/pazcal/Analisis.java</file>
+            <file>file:/home/gaius/Documents/Compiladores/PAZCAL/src/pazcal/PilaChar.java</file>
+            <file>file:/home/gaius/Documents/Compiladores/PAZCAL/src/pazcal/AnalizadorSintatico.java</file>
         </group>
     </open-files>
 </project-private>

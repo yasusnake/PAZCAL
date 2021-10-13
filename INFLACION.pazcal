@@ -1,4 +1,4 @@
-PROGRAM INFLACION ( INPUT, OUTPUT );
+PROGRAM INFLACION       ( INPUT, OUTPUT );
 {
 Asumiendo tasas de inflación anual de 7%, 8%, y 10%,
 encontrar el factor por el cual cualquier moneda, tales como
@@ -37,7 +37,7 @@ BEGIN
         FACTOR1 := ( FACTOR1 * 1.07 )
         FACTOR2 := ( FACTOR2 ) * 1.08;
         FACTOR3 := FACTOR3 * ( 1.10 );
-        WRITELN ( ANO: 5, FACTOR1: 7:3, FACTOR2: 7:3 FACTOR3: 7:3 )
+        WRITELN ( ANO: 5, FACTOR1: 7:3, FACTOR2: 7:3, FACTOR3: 7:3 )
     UNTIL ANO = MAXANOS;
 
     WRITELN;
